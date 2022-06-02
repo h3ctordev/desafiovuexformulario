@@ -1,33 +1,27 @@
 <template>
   <b-container class="my-5 w-75">
-    <h2 class="my-5 text-center">Desafio Formulario Con Vuex- Héctor Bustos</h2>
-    <v-form :fields="fields" :values="values" @send-form="onSendForm" />
-    <b-row align-h="end" class="m-5">
-      <b-button variant="outline-primary" to="/tabla" size="lg" pill>
-        Ir a Tabla
-        <b-icon icon="arrow-right"></b-icon>
+    <h2 class="my-5 text-center">Tabla con datos del formulario</h2>
+    <v-data-table :fields="fields" :items="getForms" />
+    <b-row align-h="start" class="m-5">
+      <b-button variant="outline-primary" to="/" size="lg" pill>
+        <b-icon icon="arrow-left"></b-icon>
+        Ir a Formulario
       </b-button>
     </b-row>
   </b-container>
 </template>
 
 <script>
-import VForm from "@/components/VForm.vue";
-import { mapActions } from "vuex";
+import VDataTable from "@/components/VDataTable.vue";
+import { mapActions, mapGetters } from "vuex";
+
 export default {
-  name: "App",
+  name: "TableView",
   components: {
-    VForm,
+    VDataTable,
   },
   data() {
     return {
-      values: {
-        firstname: "",
-        lastname: "",
-        dob: "",
-        email: "",
-        password: "",
-      },
       fields: [
         {
           key: "firstname",
@@ -96,22 +90,21 @@ export default {
       ],
     };
   },
+  async created() {
+    try {
+      await this.getAllforms();
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  computed: {
+    ...mapGetters("forms", ["getForms"]),
+  },
   methods: {
-    ...mapActions("forms", ["sendFormData"]),
-    async onSendForm(value) {
-      try {
-        // this.items.push({ ...value });
-        const res = await this.sendFormData({ ...value });
-        console.log(res);
-        this.values = {
-          firstname: "",
-          lastname: "",
-          years: "",
-        };
-      } catch (error) {
-        console.error(error);
-      }
-    },
+    ...mapActions("forms", ["getAllforms"]),
   },
 };
 </script>
+
+<style></style>
